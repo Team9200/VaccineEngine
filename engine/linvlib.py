@@ -5,8 +5,6 @@ import core.linvengine
 
 
 def linvScan(fileName):
-    #callbacks = [scanFIle_callback, scanDir_callback]
-
     linvEngine = core.linvengine.Engine()#debug=True)
 
     if linvEngine.setModules('modules'):
@@ -22,7 +20,7 @@ def linvScan(fileName):
                 linv.setResult()
                 absoluteFilePath = os.path.abspath(fileName)
                 if os.path.exists(absoluteFilePath):
-                    linv.scan(absoluteFilePath, scanFile_callback)
+                    linv.scan(absoluteFilePath, scanFile_callback, scanDir_callback)
                 else:
                     print '[!] Envalid path: \'%s\'' % absoluteFilePath
 
@@ -39,8 +37,12 @@ def scanDir_callback(resultValue):
 
 
 def scanFile_callback(resultValue):
-    realName = resultValue['fileName']
-    displayName = '%s' % realName
+    fs = resultValue['fileStruct']
+
+    if len(fs.getAdditionalFilename()) != 0 :
+        displayName = '%s (%s)' % (fs.getMasterFilename(), fs.getAdditionalFilename())
+    else:
+        displayName = '%s' % (fs.getMasterFilename())
 
     if resultValue['result']:
         state = 'infected'

@@ -28,7 +28,7 @@ class LVModule:
     # Explanation : 모듈 초기화
     # input : filehandle - 검사할 파일 핸들러, filename - 검사할 파일 이름
     # return : (성공/실패 여부, 악성코드 이름, 악성코드 ID)
-    def scan(self, filehandle, filename):
+    def scan(self, filehandle, filename, fileformat):
         try:
             tmpFileHandle = filehandle
 

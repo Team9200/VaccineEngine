@@ -10,9 +10,11 @@ import datetime
 import types
 import mmap
 import glob
+import tempfile
 
 import lmddec
 import linvrsa
+import linvfile
 
 # class : Engine
 # Explanation : 백신 엔진 커널
@@ -22,7 +24,7 @@ class Engine:
     def __init__(self, debug=False):
         print "Linear Vaccine"
         self.debug = debug
-        
+
         self.modulesPath = None
         self.lmdList = list()
         self.lmdModules = list()
@@ -216,7 +218,8 @@ class EngineInstance:
     # input : fileName - 검사할 파일 이름
     # return : result - 악성코드 유무, virusName - 악성코드 이름, virusID - 악성코드 ID, engineID - 검사한 모듈 ID
     def scan(self, fileName, *callback):
-        cb_fn = None
+        scanFile_callback = None
+        scanDir_callback = None
 
         resultValue = {
             'fileName': '',
@@ -227,15 +230,18 @@ class EngineInstance:
         }
 
         try:
-            cb_fn = callback[0]
+            scanFile_callback = callback[0]
+            scanDir_callback = callback[1]
         except IndexError:
             pass
 
-        fileScanList = [fileName]
+        fileInfo = linvfile.FileStruct(fileName)
+        fileScanList = [fileInfo]
 
         while len(fileScanList):
             try:
-                realName = fileScanList.pop(0)
+                tmpFileInfo = fileScanList.pop(0)
+                realName = tmpFileInfo.getFilename()
 
                 if os.path.isdir(realName):
                     if realName[-1] == os.sep:
@@ -246,30 +252,46 @@ class EngineInstance:
 
                     self.result['Folders'] += 1
 
-                    if isinstance(cb_fn, types.FunctionType):
-                        cb_fn(resultValue) # dircallback 넣어줘야 함
+                    if isinstance(scanDir_callback, types.FunctionType):
+                        scanDir_callback(resultValue)
 
                     dirFileList = glob.glob(realName + os.sep + '*')
-                    fileScanList = dirFileList + fileScanList
+                    tmpFileList = list()
 
-                elif os.path.isfile(realName):
-                    result, virusName, virusID, moduleID = self.__scan_file(realName)
+                    for rFname in dirFileList:
+                        tmpInfo = linvfile.FileStruct(rFname)
+                        tmpFileList.append(tmpInfo)
+
+                    fileScanList = tmpFileList + fileScanList
+
+                elif os.path.isfile(realName) or tmpFileInfo.isArchive():
+                    self.result['Files'] += 1
+                    ret = self.unarc(tmpFileInfo)
+                    if ret:
+                        tmpFileInfo = ret
+
+                    fileFormat = self.format(tmpFileInfo)
+
+                    result, virusName, virusID, moduleID = self.__scan_file(realName, fileFormat)
 
                     if result:
                         self.result['InfectedFiles'] += 1
                         self.identifiedVirus.update([virusName])
 
-                    self.result['Files'] += 1
-
                     resultValue['result'] = result
                     resultValue['virusName'] = virusName
                     resultValue['virusID'] = virusID
                     resultValue['moduleID'] = moduleID
-                    resultValue['fileName'] = realName
+                    resultValue['fileStruct'] = tmpFileInfo
 
-                    if isinstance(cb_fn, types.FunctionType):
-                        cb_fn(resultValue)
+                    if isinstance(scanFile_callback, types.FunctionType):
+                        scanFile_callback(resultValue)
 
+                    if not result:
+                        arcFileList = self.arclist(tmpFileInfo, fileFormat)
+                        if len(arcFileList):
+                            fileScanList = arcFileList + fileScanList
+                            
             except KeyboardInterrupt:
                 return 1
 
@@ -279,7 +301,7 @@ class EngineInstance:
     # Explanation : 입력받은 파일을 모듈별로 검사함
     # input : fileName - 검사할 파일 이름
     # return : result - 악성코드 유무, virusName - 악성코드 이름, virusID - 악성코드 ID, engineID - 검사한 모듈 ID
-    def __scan_file(self, fileName):
+    def __scan_file(self, fileName, fileformat):
         if self.debug:
             print '[*] LVModule.__scan_file() :'
         try:
@@ -293,7 +315,7 @@ class EngineInstance:
 
             for i, inst in enumerate(self.lvModInst):
                 try:
-                    result, virusName, virusID = inst.scan(mm, fileName)
+                    result, virusName, virusID = inst.scan(mm, fileName, fileformat)
                     if result:
                         moduleID = i
                         if self.debug:
@@ -310,6 +332,8 @@ class EngineInstance:
             return result, virusName, virusID, moduleID
         except IOError:
             self.result['IOErrors'] += 1
+        except ValueError:
+            pass
 
         return False, '', -1, -1
 
@@ -367,3 +391,106 @@ class EngineInstance:
         self.result['IdentifiedViruses'] = len(self.identifiedVirus)
         return self.result
 
+    # function : unarc(self, fileStruct)
+    # Explanation : 입력받은 파일정보로 압축을 품
+    # input : fileStruct - 압축 해제할 파일 정보
+    # return : data - 압축 해제된 정보, None - 없음
+    def unarc(self, fileStruct):
+        unpacFileStruct = None
+
+        try:
+            if fileStruct.isArchive():
+                arcEngineID = fileStruct.getArchiveEngineName()
+                arcName = fileStruct.getArchiveFilename()
+                nameInArc = fileStruct.getFilenameInArchive()
+
+                for inst in self.lvModInst:
+                    try:
+                        unpackData = inst.unarc(arcEngineID, arcName, nameInArc)
+
+                        if unpackData:
+                            rname = tempfile.mktemp(prefix='ktmp')
+                            fp = open(rname, 'wb')
+                            fp.write(unpackData)
+                            fp.close()
+
+                            unpacFileStruct = fileStruct
+                            unpacFileStruct.setFilename(rname)
+                            break
+
+                    except AttributeError:
+                        continue
+
+                return unpacFileStruct
+
+        except IOError:
+            pass
+
+        return None
+
+    # function : arclist(self, fileStruct, fileformat)
+    # Explanation : 압축 해제 모듈에게 파일 내부 리스트 요청
+    # input : fileStruct - 압축 해제 후 리스트를 불러올 파일 정보
+    #         format - 미리 분석한 파일 포멧 정보
+    # return : data - 압축 해제된 정보, None - 없음
+    def arclist(self, fileStruct, fileformat):
+        arcList = list()
+        fileScanList = list()
+
+        rname = fileStruct.getFilename()
+        deepName = fileStruct.getAdditionalFilename()
+        masterName = fileStruct.getMasterFilename()
+        level = fileStruct.getLevel()
+
+        for inst in self.lvModInst:
+            try:
+                arcList = inst.arclist(rname, fileformat)
+
+                if len(arcList):
+                    for alist in arcList:
+                        arcID = alist[0]
+                        name = alist[1]
+
+                        if len(deepName):
+                            dname = '%s/%s' % (deepName, name)
+                        else:
+                            dname = '%s' % name
+
+                        fs = linvfile.FileStruct()
+                        fs.setArchive(arcID, rname, name, dname, masterName, False, False, level+1)
+                        fileScanList.append(fs)
+
+                    self.result['Packed'] += 1
+                    break
+            except AttributeError:
+                continue
+
+        return fileScanList
+
+    # function : arclist(self, fileStruct, fileformat)
+    # Explanation : 파일 포맷 분석 요청
+    # input : fileStruct - 압축 해제 대상 파일 정보
+    # return : {파일 분석 정보} or {}
+    def format(self, fileStruct):
+        ret = {}
+        filename = fileStruct.getFilename()
+
+        try:
+            fp = open(filename, 'rb')
+            mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
+            for inst in self.lvModInst:
+                try:
+                    ff = inst.format(mm, filename)
+                    if ff:
+                        ret.update(ff)
+                except AttributeError:
+                    pass
+
+            mm.close()
+            fp.close()
+        except IOError:
+            pass
+        except ValueError:
+            pass
+
+        return ret
