@@ -126,6 +126,8 @@ class EngineInstance:
 
         self.lvModInst = list()
 
+        self.updateInfo = list()
+
         self.result = {}
         self.identifiedVirus = set()
     # function : create(self, lmdModules)
@@ -218,8 +220,12 @@ class EngineInstance:
     # input : fileName - 검사할 파일 이름
     # return : result - 악성코드 유무, virusName - 악성코드 이름, virusID - 악성코드 ID, engineID - 검사한 모듈 ID
     def scan(self, fileName, *callback):
+        self.updateInfo = list()
+
         scanFile_callback = None
         scanDir_callback = None
+        disinfect_callback = None
+        update_callback = None
 
         resultValue = {
             'fileName': '',
@@ -232,6 +238,8 @@ class EngineInstance:
         try:
             scanFile_callback = callback[0]
             scanDir_callback = callback[1]
+            disinfect_callback = callback[2]
+            update_callback = callback[3]
         except IndexError:
             pass
 
@@ -249,6 +257,7 @@ class EngineInstance:
 
                     resultValue['result'] = False
                     resultValue['fileName'] = realName
+                    resultValue['fileStruct'] = tmpFileInfo
 
                     self.result['Folders'] += 1
 
@@ -288,6 +297,11 @@ class EngineInstance:
                     if isinstance(scanFile_callback, types.FunctionType):
                         scanFile_callback(resultValue)
 
+                    if resultValue['result']:
+                        self.__disinfect_process(resultValue, disinfect_callback)
+
+                    self.__update_process(tmpFileInfo, update_callback)
+
                     if not result:
                         arcFileList = self.arclist(tmpFileInfo, fileFormat)
                         if len(arcFileList):
@@ -295,6 +309,8 @@ class EngineInstance:
                             
             except KeyboardInterrupt:
                 return 1
+
+        self.__update_process(None, update_callback, True)
 
         return 0
 
@@ -311,7 +327,7 @@ class EngineInstance:
             virusID = -1
             moduleID = -1
             fileName = fileStruct.getFilename()
-            
+
             fp = open(fileName, 'rb')
             mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
 
@@ -497,3 +513,170 @@ class EngineInstance:
             pass
 
         return ret
+
+    # function : __disinfect_process(self, resultValue, disinfect_callback)
+    # Explanation : 악성코드를 치료
+    # input : resultValue - 악성코드 검사 결과, disinfect_callback - 치료 콜백 함수
+    # return : {파일 분석 정보} or {}
+    def __disinfect_process(self, resultValue, disinfect_callback):
+        tmpFileInfo = resultValue['fileStruct']
+        virusID = resultValue['virusID']
+        moduleID = resultValue['moduleID']
+
+        disinfectFilename = tmpFileInfo.getFilename()
+
+        disinfectResult = self.disinfect(disinfectFilename, virusID, moduleID)
+        if disinfectResult:
+            self.result['DisinfectedFiles'] += 1
+
+        tmpFileInfo.setModify(disinfectResult)
+
+        if isinstance(disinfect_callback, types.FunctionType):
+            disinfect_callback(resultValue)
+            
+        return disinfectResult
+
+    # function : arclist(self, fileStruct, fileformat)
+    # Explanation : 파일 포맷 분석 요청
+    # input : fileStruct - 압축 해제 대상 파일 정보
+    # return : {파일 분석 정보} or {}
+    def __update_process(self, fileStruct, update_callback, immediatelyFlag=False):
+        if immediatelyFlag is False:
+            if len(self.updateInfo) == 0:
+                self.updateInfo.append(fileStruct)
+            else:
+                n_file_info = fileStruct
+                p_file_info = self.updateInfo[-1]
+
+                if p_file_info.getMasterFilename() == n_file_info.getMasterFilename():
+                    if p_file_info.getLevel() <= n_file_info.getLevel():
+                        self.updateInfo.append(n_file_info)
+                    else:
+                        ret_file_info = self.__update_arc_fileStruct(p_file_info)
+                        self.updateInfo.append(ret_file_info)
+                        self.updateInfo.append(n_file_info)
+                else:
+                    if len(self.updateInfo) == 1:
+                        self.updateInfo = [fileStruct]
+                    else:
+                        immediatelyFlag = True
+
+        if immediatelyFlag and len(self.updateInfo) > 1:
+            ret_file_info = None
+
+            while len(self.updateInfo):
+                p_file_info = self.updateInfo[-1]
+
+                ret_file_info = self.__update_arc_fileStruct(p_file_info)
+
+                if len(self.updateInfo):
+                    self.updateInfo.append(ret_file_info)
+
+            if isinstance(update_callback, types.FunctionType) and ret_file_info:
+                update_callback(ret_file_info)
+
+    # function : arclist(self, fileStruct, fileformat)
+    # Explanation : 파일 포맷 분석 요청
+    # input : fileStruct - 압축 해제 대상 파일 정보
+    # return : {파일 분석 정보} or {}
+    def __update_arc_fileStruct(self, p_file_name):
+        t = list()
+
+        arc_level = p_file_name.getLevel()
+
+        while len(self.updateInfo):
+            if self.updateInfo[-1].getLevel() == arc_level:
+                t.append(self.updateInfo.pop())
+            else:
+                break
+
+        t.reverse()
+
+        try:
+            ret_file_info = self.updateInfo.pop()
+
+            b_update = False
+
+            for finfo in t:
+                if finfo.isModify():
+                    b_update = True
+                    break
+
+            if b_update:
+                arc_name = t[0].getArchiveFilename()
+                arc_engine_id = t[0].getArchiveEngineName()
+
+                for inst in self.lvModInst:
+                    try:
+                        ret = inst.mkarc(arc_engine_id, arc_name, t)
+                        if ret:
+                            break
+                    except AttributeError:
+                        continue
+
+                ret_file_info.setModify(True)
+
+                for tmp in t:
+                    t_fname = tmp.getFilename()
+                    if os.path.exists(t_fname):
+                        os.remove(t_fname)
+
+                return ret_file_info
+        except IndexError:
+            return None
+
+
+
+def scanDir_callback(resultValue):
+    realName = resultValue['fileName']
+    print realName
+
+
+def scanFile_callback(resultValue):
+    fileStruct = resultValue['fileStruct']
+
+    if len(fileStruct.getAdditionalFilename()) != 0 :
+        displayName = '%s (%s)' % (fileStruct.getMasterFilename(), fileStruct.getAdditionalFilename())
+    else:
+        displayName = '%s' % (fileStruct.getMasterFilename())
+
+    if resultValue['result']:
+        state = 'infected'
+
+        virusName = resultValue['virusName']
+        message = '%s : %s' % (state, virusName)
+    else:
+        message = 'ok'
+
+    resultMessage = displayName + ' - ' + message
+    print resultMessage
+
+def disinfect_callback(resultValue):
+    fileStruct = resultValue['fileStruct']
+    message = str()
+
+    if len(fileStruct.getAdditionalFilename()) != 0:
+        displayName = '%s (%s)' % (fileStruct.getMasterFilename(), fileStruct.getAdditionalFilename())
+
+    else:
+        displayName = '%s' % (fileStruct.getMasterFilename())
+
+    if fileStruct.isModify():
+        message = 'disinfected'
+
+    else:
+        message = 'disinfected failed'
+
+    resultMessage = displayName + ' - ' + message
+
+    print resultMessage
+
+
+def update_callback(retFileInfo):
+    if retFileInfo.isModify():
+        displayName = retFileInfo.getFilename()
+
+        message = 'updated'
+        resultMessage = displayName + ' - ' + message
+
+        print resultMessage

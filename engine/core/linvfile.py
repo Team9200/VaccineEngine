@@ -27,7 +27,7 @@ class FileStruct:
         self.__fs['additionalFilename'] = str()
 
         self.__fs['masterFilename'] = filename
-        self.__fs['isMdify'] = False
+        self.__fs['isModify'] = False
         self.__fs['canArc'] = False
         self.__fs['level'] = level
 
@@ -72,12 +72,12 @@ class FileStruct:
         return self.__fs['additionalFilename']
 
 
-    def isMdify(self):
-        return self.__fs['isMdify']
+    def isModify(self):
+        return self.__fs['isModify']
 
 
     def setModify(self, modify):
-        self.__fs['isMdify'] = modify
+        self.__fs['isModify'] = modify
 
 
     def canArchive(self):
@@ -103,7 +103,7 @@ class FileStruct:
         self.__fs['additionalFilename'] = dname
 
         self.__fs['masterFilename'] = mname
-        self.__fs['isMdify'] = modify
+        self.__fs['isModify'] = modify
         self.__fs['canArc'] = canArc
         self.__fs['level'] = level
 

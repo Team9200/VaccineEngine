@@ -20,7 +20,7 @@ def linvScan(fileName):
                 linv.setResult()
                 absoluteFilePath = os.path.abspath(fileName)
                 if os.path.exists(absoluteFilePath):
-                    linv.scan(absoluteFilePath, scanFile_callback, scanDir_callback)
+                    linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
                 else:
                     print '[!] Envalid path: \'%s\'' % absoluteFilePath
 
@@ -30,30 +30,6 @@ def linvScan(fileName):
     else:
         print "[!] No modules!"
 
-
-def scanDir_callback(resultValue):
-    realName = resultValue['fileName']
-    print realName
-
-
-def scanFile_callback(resultValue):
-    fs = resultValue['fileStruct']
-
-    if len(fs.getAdditionalFilename()) != 0 :
-        displayName = '%s (%s)' % (fs.getMasterFilename(), fs.getAdditionalFilename())
-    else:
-        displayName = '%s' % (fs.getMasterFilename())
-
-    if resultValue['result']:
-        state = 'infected'
-
-        virusName = resultValue['virusName']
-        message = '%s : %s' % (state, virusName)
-    else:
-        message = 'ok'
-
-    resultMessage = displayName + ' - ' + message
-    print resultMessage
 
 
 def printScanResult(ret):
