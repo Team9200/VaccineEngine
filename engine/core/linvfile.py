@@ -106,3 +106,7 @@ class FileStruct:
         self.__fs['isMdify'] = modify
         self.__fs['canArc'] = canArc
         self.__fs['level'] = level
+
+
+    def printfileinfo(self):
+        print self.__fs['isArc'], self.__fs['arcEngineName'], self.__fs['arcFilename'], self.__fs['filenameInArc'], self.__fs['realFilename'],

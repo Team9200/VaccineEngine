@@ -267,12 +267,13 @@ class EngineInstance:
                 elif os.path.isfile(realName) or tmpFileInfo.isArchive():
                     self.result['Files'] += 1
                     ret = self.unarc(tmpFileInfo)
+
                     if ret:
                         tmpFileInfo = ret
 
                     fileFormat = self.format(tmpFileInfo)
 
-                    result, virusName, virusID, moduleID = self.__scan_file(realName, fileFormat)
+                    result, virusName, virusID, moduleID = self.__scan_file(tmpFileInfo, fileFormat)
 
                     if result:
                         self.result['InfectedFiles'] += 1
@@ -301,7 +302,7 @@ class EngineInstance:
     # Explanation : 입력받은 파일을 모듈별로 검사함
     # input : fileName - 검사할 파일 이름
     # return : result - 악성코드 유무, virusName - 악성코드 이름, virusID - 악성코드 ID, engineID - 검사한 모듈 ID
-    def __scan_file(self, fileName, fileformat):
+    def __scan_file(self, fileStruct, fileformat):
         if self.debug:
             print '[*] LVModule.__scan_file() :'
         try:
@@ -309,7 +310,8 @@ class EngineInstance:
             virusName = str()
             virusID = -1
             moduleID = -1
-
+            fileName = fileStruct.getFilename()
+            
             fp = open(fileName, 'rb')
             mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
 
@@ -416,6 +418,7 @@ class EngineInstance:
 
                             unpacFileStruct = fileStruct
                             unpacFileStruct.setFilename(rname)
+
                             break
 
                     except AttributeError:

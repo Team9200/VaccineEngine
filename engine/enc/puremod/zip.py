@@ -70,10 +70,10 @@ class LVModule:
     # return : [[압축엔진, 압축된 파일 이름]]
     def unarc(self, arcEngineID, arcName, fnameInArc):
         if arcEngineID == 'arc_zip':
+            print 'called unarc'
             zfile = zipfile.ZipFile(arcName)
             data = zfile.read(fnameInArc)
             zfile.close()
-
             return data
 
         return None
