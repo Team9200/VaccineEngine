@@ -2,15 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="33009ea7-30c8-4f59-b83f-02fcd8497225" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/core/linvengine.py" beforeDir="false" afterPath="$PROJECT_DIR$/engine/core/linvengine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/core/linvfile.py" beforeDir="false" afterPath="$PROJECT_DIR$/engine/core/linvfile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/enc/puremod/zip.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/enc/zip.lmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/enc/zip.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/linvlib.py" beforeDir="false" afterPath="$PROJECT_DIR$/engine/linvlib.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/modules/zip.lmd" beforeDir="false" afterPath="$PROJECT_DIR$/engine/modules/zip.lmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/sample/eicar.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/sample/eicar.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample/sample.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample/sample/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample2 - 복사본/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample2 - 복사본/sample.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample3/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample3/sample.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample4/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample4/sample.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample5/dummy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample5/sample.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/sample6/sample.zip" beforeDir="false" afterPath="$PROJECT_DIR$/engine/sample6/sample.zip" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,13 +28,14 @@
     <session id="390339744">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="6" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
+          <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.20" value="1" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -46,13 +53,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="lst" value="18" />
-          <entry key="py" value="9227" />
+          <entry key="py" value="9291" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="18" />
-          <entry key="Python" value="9227" />
+          <entry key="Python" value="9291" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -63,8 +70,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/engine/core/linvfile.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
+            <state relative-caret-position="529">
+              <caret line="23" column="22" lean-forward="true" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -72,8 +79,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/engine/core/linvengine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="595" column="8" selection-start-line="595" selection-start-column="8" selection-end-line="595" selection-end-column="8" />
+            <state relative-caret-position="3133">
+              <caret line="478" column="14" selection-start-line="478" selection-start-column="14" selection-end-line="478" selection-end-column="14" />
               <folding>
                 <element signature="e#100#109#0" expanded="true" />
               </folding>
@@ -84,8 +91,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/engine/linvlib.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+            <state relative-caret-position="943">
+              <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -181,9 +188,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-7" />
+    <option name="x" value="108" />
+    <option name="y" value="45" />
     <option name="width" value="974" />
-    <option name="height" value="1087" />
+    <option name="height" value="986" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -225,7 +233,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -273,6 +280,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -359,8 +367,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="974" height="1087" extended-state="0" />
-    <editor active="true" />
+    <frame x="108" y="45" width="974" height="986" extended-state="0" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23397435" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -438,40 +445,31 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
           <caret line="20" column="25" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
-          <folding>
-            <element signature="e#106#115#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/engine/enc/puremod/zip.py">
+    <entry file="file://$PROJECT_DIR$/engine/enc/puremod/zip.py" />
+    <entry file="file://$PROJECT_DIR$/engine/core/linvfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="106">
-          <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
+        <state relative-caret-position="529">
+          <caret line="23" column="22" lean-forward="true" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/engine/linvlib.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+        <state relative-caret-position="943">
+          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/engine/core/linvfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/engine/core/linvengine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="595" column="8" selection-start-line="595" selection-start-column="8" selection-end-line="595" selection-end-column="8" />
+        <state relative-caret-position="3133">
+          <caret line="478" column="14" selection-start-line="478" selection-start-column="14" selection-end-line="478" selection-end-column="14" />
           <folding>
             <element signature="e#100#109#0" expanded="true" />
           </folding>

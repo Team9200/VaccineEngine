@@ -31,7 +31,6 @@ def linvScan(fileName):
         print "[!] No modules!"
 
 
-
 def printScanResult(ret):
     print '\n[-] Result'
     for key in ret.keys():

@@ -486,7 +486,7 @@ class EngineInstance:
 
         return fileScanList
 
-    # function : arclist(self, fileStruct, fileformat)
+    # function : format(self, fileStruct)
     # Explanation : 파일 포맷 분석 요청
     # input : fileStruct - 압축 해제 대상 파일 정보
     # return : {파일 분석 정보} or {}
@@ -536,10 +536,9 @@ class EngineInstance:
             
         return disinfectResult
 
-    # function : arclist(self, fileStruct, fileformat)
-    # Explanation : 파일 포맷 분석 요청
-    # input : fileStruct - 압축 해제 대상 파일 정보
-    # return : {파일 분석 정보} or {}
+    # function : __update_process(self, fileStruct, update_callback, immediatelyFlag=False)
+    # Explanation :
+    # input : fileStruct -
     def __update_process(self, fileStruct, update_callback, immediatelyFlag=False):
         if immediatelyFlag is False:
             if len(self.updateInfo) == 0:
@@ -575,10 +574,9 @@ class EngineInstance:
             if isinstance(update_callback, types.FunctionType) and ret_file_info:
                 update_callback(ret_file_info)
 
-    # function : arclist(self, fileStruct, fileformat)
-    # Explanation : 파일 포맷 분석 요청
-    # input : fileStruct - 압축 해제 대상 파일 정보
-    # return : {파일 분석 정보} or {}
+    # function : __update_arc_fileStruct(self, p_file_name)
+    # Explanation :
+    # input : p_file_name -
     def __update_arc_fileStruct(self, p_file_name):
         t = list()
 
@@ -624,7 +622,6 @@ class EngineInstance:
                 return ret_file_info
         except IndexError:
             return None
-
 
 
 def scanDir_callback(resultValue):
