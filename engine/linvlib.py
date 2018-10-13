@@ -7,8 +7,9 @@ import core.linvengine
 
 def linvScan(fileName):
     linvEngine = core.linvengine.Engine()#debug=True)
+    rootDir = os.path.dirname(os.path.abspath(__file__))
 
-    if linvEngine.setModules('modules'):
+    if linvEngine.setModules(rootDir + '/modules'):
         linv = linvEngine.createInstance()
         if linv:
             ret = linv.init()
