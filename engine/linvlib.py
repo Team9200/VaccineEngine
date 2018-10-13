@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 import core.linvengine
 
@@ -22,8 +23,8 @@ def linvScan(fileName):
 
                 if os.path.exists(absoluteFilePath):
                     scannedPath = linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
-                    print scannedPath
-                    print "length", len(scannedPath)
+                    print json.dumps(scannedPath)
+                    # ret['scannedPath'] = scannedPath
                 else:
                     print '[!] Envalid path: \'%s\'' % absoluteFilePath
 
@@ -35,9 +36,10 @@ def linvScan(fileName):
 
 
 def printScanResult(ret):
-    print '\n[-] Result'
-    for key in ret.keys():
-        print key, ":", ret[key]
+    # print '\n[-] Result'
+    print json.dumps(ret)
+    # for key in ret.keys():
+    #     print key, ":", ret[key]
 
 
 if __name__ == '__main__':
