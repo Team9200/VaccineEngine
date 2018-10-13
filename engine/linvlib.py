@@ -6,9 +6,8 @@ import core.linvengine
 
 def linvScan(fileName):
     linvEngine = core.linvengine.Engine()#debug=True)
-    rootDir = os.path.dirname(os.path.abspath(__file__))
 
-    if linvEngine.setModules(rootDir + '/modules'):
+    if linvEngine.setModules('modules'):
         linv = linvEngine.createInstance()
         if linv:
             ret = linv.init()
@@ -20,8 +19,11 @@ def linvScan(fileName):
             if ret:
                 linv.setResult()
                 absoluteFilePath = os.path.abspath(fileName)
+
                 if os.path.exists(absoluteFilePath):
-                    linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
+                    scannedPath = linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
+                    print scannedPath
+                    print "length", len(scannedPath)
                 else:
                     print '[!] Envalid path: \'%s\'' % absoluteFilePath
 

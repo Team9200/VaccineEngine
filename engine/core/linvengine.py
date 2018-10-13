@@ -220,7 +220,7 @@ class EngineInstance:
     # input : fileName - 검사할 파일 이름
     # return : result - 악성코드 유무, virusName - 악성코드 이름, virusID - 악성코드 ID, engineID - 검사한 모듈 ID
     def scan(self, fileName, *callback):
-        self.updateInfo = list()
+        #self.updateInfo = list()
 
         scanFile_callback = None
         scanDir_callback = None
@@ -235,6 +235,7 @@ class EngineInstance:
             'moduleID': -1
         }
 
+        '''
         try:
             scanFile_callback = callback[0]
             scanDir_callback = callback[1]
@@ -242,6 +243,8 @@ class EngineInstance:
             update_callback = callback[3]
         except IndexError:
             pass
+        '''
+        scanedPath = list()
 
         fileInfo = linvfile.FileStruct(fileName)
         fileScanList = [fileInfo]
@@ -275,6 +278,8 @@ class EngineInstance:
 
                 elif os.path.isfile(realName) or tmpFileInfo.isArchive():
                     self.result['Files'] += 1
+                    scanedPath.append(realName)
+
                     ret = self.unarc(tmpFileInfo)
 
                     if ret:
@@ -312,7 +317,7 @@ class EngineInstance:
 
         self.__update_process(None, update_callback, True)
 
-        return 0
+        return scanedPath
 
     # function : __scan_file(self, fileName)
     # Explanation : 입력받은 파일을 모듈별로 검사함
@@ -351,6 +356,8 @@ class EngineInstance:
         except IOError:
             self.result['IOErrors'] += 1
         except ValueError:
+            pass
+        except WindowsError:
             pass
 
         return False, '', -1, -1
@@ -511,6 +518,8 @@ class EngineInstance:
             pass
         except ValueError:
             pass
+        except WindowsError:
+            pass
 
         return ret
 
@@ -559,13 +568,12 @@ class EngineInstance:
                         self.updateInfo = [fileStruct]
                     else:
                         immediatelyFlag = True
-
+                    
         if immediatelyFlag and len(self.updateInfo) > 1:
             ret_file_info = None
 
             while len(self.updateInfo):
                 p_file_info = self.updateInfo[-1]
-
                 ret_file_info = self.__update_arc_fileStruct(p_file_info)
 
                 if len(self.updateInfo):
@@ -580,17 +588,17 @@ class EngineInstance:
     def __update_arc_fileStruct(self, p_file_name):
         t = list()
 
-        arc_level = p_file_name.getLevel()
-
-        while len(self.updateInfo):
-            if self.updateInfo[-1].getLevel() == arc_level:
-                t.append(self.updateInfo.pop())
-            else:
-                break
-
-        t.reverse()
-
         try:
+            arc_level = p_file_name.getLevel()
+
+            while len(self.updateInfo):
+                if self.updateInfo[-1].getLevel() == arc_level:
+                    t.append(self.updateInfo.pop())
+                else:
+                    break
+
+            t.reverse()
+
             ret_file_info = self.updateInfo.pop()
 
             b_update = False
@@ -621,7 +629,9 @@ class EngineInstance:
 
                 return ret_file_info
         except IndexError:
-            return None
+            pass
+        except AttributeError:
+            pass
 
 
 def scanDir_callback(resultValue):
