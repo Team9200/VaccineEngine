@@ -278,7 +278,7 @@ class EngineInstance:
 
                 elif os.path.isfile(realName) or tmpFileInfo.isArchive():
                     self.result['Files'] += 1
-                    scanedPath.append(realName)
+                    #scanedPath.append(realName)
 
                     ret = self.unarc(tmpFileInfo)
 
@@ -302,6 +302,10 @@ class EngineInstance:
                     if isinstance(scanFile_callback, types.FunctionType):
                         scanFile_callback(resultValue)
 
+                    #result false => ok이면(검사 결과 ok이면) scanedPath에 넣고 리턴
+                    if not resultValue['result']:
+                        scanedPath.append(realName)
+
                     if resultValue['result']:
                         self.__disinfect_process(resultValue, disinfect_callback)
 
@@ -309,6 +313,7 @@ class EngineInstance:
 
                     if not result:
                         arcFileList = self.arclist(tmpFileInfo, fileFormat)
+
                         if len(arcFileList):
                             fileScanList = arcFileList + fileScanList
                             
