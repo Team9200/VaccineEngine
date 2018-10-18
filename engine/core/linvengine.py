@@ -22,7 +22,7 @@ class Engine:
     # function : __init__(self, debug=False)
     # Explanation : 클래스 초기화
     def __init__(self, debug=False):
-        print "Linear Vaccine"
+        #print "Linear Vaccine"
         self.debug = debug
 
         self.modulesPath = None
