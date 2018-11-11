@@ -15,7 +15,7 @@ def linvScan(fileName):
         if linv:
             ret = linv.init()
             scanStartTime = linv.getVersion()
-            sigNum = linv.getSignum()
+            #sigNum = linv.getSignum()
             #print 'Scan Start time %s UTC' % scanStartTime
             #print 'Total Signiture Num : ' + str(sigNum)
             #print '\n[-] Scan Start'
@@ -25,15 +25,16 @@ def linvScan(fileName):
                 absoluteFilePath = os.path.abspath(fileName)
 
                 if os.path.exists(absoluteFilePath):
-                    scannedPath = linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
+                    linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
+                    #scannedPath = linv.scan(absoluteFilePath, core.linvengine.scanFile_callback, core.linvengine.scanDir_callback, core.linvengine.disinfect_callback, core.linvengine.update_callback)
                     #print json.dumps(scannedPath)
                     #ret.add('scannedPath':str(scannedPath))
                 #else:
                     #print '[!] Envalid path: \'%s\'' % absoluteFilePath
 
                 ret = linv.getResult()
-                ret.update({'scannedPath': scannedPath})# Scanned Path Json에 넣음
-                ret.update({'lastUpdate': str(scanStartTime)})
+                #ret.update({'scannedPath': scannedPath})# Scanned Path Json에 넣음
+                #ret.update({'lastUpdate': str(scanStartTime)})
                 printScanResult(ret)
                 linv.uninit()
     else:

@@ -244,7 +244,6 @@ class EngineInstance:
         except IndexError:
             pass
         '''
-        scanedPath = list()
 
         fileInfo = linvfile.FileStruct(fileName)
         fileScanList = [fileInfo]
@@ -278,7 +277,7 @@ class EngineInstance:
 
                 elif os.path.isfile(realName) or tmpFileInfo.isArchive():
                     self.result['Files'] += 1
-                    #scanedPath.append(realName)
+                    self.result['ScannedPaths'].append(realName)
 
                     ret = self.unarc(tmpFileInfo)
 
@@ -292,6 +291,8 @@ class EngineInstance:
                     if result:
                         self.result['InfectedFiles'] += 1
                         self.identifiedVirus.update([virusName])
+                        self.result['InfectedPaths'].append(realName)
+
 
                     resultValue['result'] = result
                     resultValue['virusName'] = virusName
@@ -302,10 +303,6 @@ class EngineInstance:
                     if isinstance(scanFile_callback, types.FunctionType):
                         scanFile_callback(resultValue)
 
-                    #result false => ok이면(검사 결과 ok이면) scanedPath에 넣고 리턴
-                    if not resultValue['result']:
-                        scanedPath.append(realName)
-
                     if resultValue['result']:
                         self.__disinfect_process(resultValue, disinfect_callback)
 
@@ -313,7 +310,6 @@ class EngineInstance:
 
                     if not result:
                         arcFileList = self.arclist(tmpFileInfo, fileFormat)
-
                         if len(arcFileList):
                             fileScanList = arcFileList + fileScanList
                             
@@ -322,7 +318,7 @@ class EngineInstance:
 
         self.__update_process(None, update_callback, True)
 
-        return scanedPath
+        return 0
 
     # function : __scan_file(self, fileName)
     # Explanation : 입력받은 파일을 모듈별로 검사함
@@ -416,6 +412,8 @@ class EngineInstance:
         self.result['IOErrors'] = 0
         self.result['DisinfectedFiles'] = 0
         self.result['DeletedFiles'] = 0
+        self.result['ScannedPaths'] = list()
+        self.result['InfectedPaths'] = list()
 
     def getResult(self):
         self.result['IdentifiedViruses'] = len(self.identifiedVirus)
