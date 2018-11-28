@@ -44,7 +44,7 @@ def linvScan(fileName):
 
 def printScanResult(ret):
     #print '\n[-] Result'
-    print json.dumps(ret)
+    print ret
     #for key in ret.keys():
     #    print key, ":", ret[key]
 

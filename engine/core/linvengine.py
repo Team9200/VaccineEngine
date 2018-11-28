@@ -277,7 +277,7 @@ class EngineInstance:
 
                 elif os.path.isfile(realName) or tmpFileInfo.isArchive():
                     self.result['Files'] += 1
-                    self.result['ScannedPaths'].append(realName)
+                    self.result['ScannedPaths'].append(realName.decode('euckr'))
 
                     ret = self.unarc(tmpFileInfo)
 
@@ -291,7 +291,7 @@ class EngineInstance:
                     if result:
                         self.result['InfectedFiles'] += 1
                         self.identifiedVirus.update([virusName])
-                        self.result['InfectedPaths'].append(realName)
+                        self.result['InfectedPaths'].append(realName.decode('euckr'))
 
 
                     resultValue['result'] = result
