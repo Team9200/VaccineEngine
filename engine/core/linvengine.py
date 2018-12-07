@@ -309,6 +309,7 @@ class EngineInstance:
                     self.__update_process(tmpFileInfo, update_callback)
 
                     if not result:
+                        self.result['UnknownPaths'].append(realName.decode('euckr'))
                         arcFileList = self.arclist(tmpFileInfo, fileFormat)
                         if len(arcFileList):
                             fileScanList = arcFileList + fileScanList
@@ -414,6 +415,7 @@ class EngineInstance:
         self.result['DeletedFiles'] = 0
         self.result['ScannedPaths'] = list()
         self.result['InfectedPaths'] = list()
+        self.result['UnknownPaths'] = list()
 
     def getResult(self):
         self.result['IdentifiedViruses'] = len(self.identifiedVirus)
