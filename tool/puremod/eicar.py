@@ -8,6 +8,7 @@ import os
 import linvsharelib
 import string
 import shutil
+import time
 
 # class : LVPlugin
 # Explanation : eicar 모듈
@@ -55,6 +56,12 @@ class LVModule:
             if malwareID == 0:
                 try:
                     shutil.move(filename, './tmp')
+                    quarantine = open('./tmp/quarantine.json', 'a')
+                    now = time.localtime()
+                    s = "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+                    data = {'timestamp': s, 'filename': filename, 'malwarename': 'eicar'}
+                    quarantine.write(data)
+                    quarantine.close()
                 except shutil.Error:
                     os.remove(filename)
                 return True
